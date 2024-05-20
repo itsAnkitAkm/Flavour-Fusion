@@ -70,15 +70,17 @@ const getFoodsByCategory = asyncHandler(async (req, res) => {
     // If a category is provided, find the category and add it to the query
     if (category) {
         const categoryData = await Category.findOne({ Name: category });
-        query.CategoryName = categoryData._id;
+        if (categoryData) {
+            query.CategoryName = categoryData._id;
+        }
     }
 
     // Find food items that match the query
     const foodItems = await Food.find(query);
-   
 
     res.status(200).json(new ApiResponse(200, foodItems, "Data fetched"));
 });
+
 
 
 
