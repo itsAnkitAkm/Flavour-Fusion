@@ -21,15 +21,17 @@ const createOrUpdateCart = asyncHandler(async (req, res) => {
 
     // Update or create order item
     const existingOrderItem = cart.Order_Item.find(item => item.order.equals(Order_id));
+    const food = await Food.findOne({ _id: Order_id });
     if (existingOrderItem) {
       existingOrderItem.quantity += quantity;
+      existingOrderItem.totalAmmount += food.Unit_Price * quantity;
     } else {
-      const food = await Food.findOne({ _id: Order_id });
+      
       cart.Order_Item.push({
         order: Order_id,
         name: food.Name,
         quantity,
-        thumbnail: food.image, // Assuming `image` is a field in the Food model
+        thumbnail: food.image, 
         totalAmmount: food.Unit_Price * quantity,
       });
     }
