@@ -6,7 +6,6 @@ import { Food } from "../models/food.model.js";
 
 const createOrUpdateCart = asyncHandler(async (req, res) => {
   const customerId = req.user?._id;
- // console.log(customerId);
   const { Order_id, quantity } = req.body;
 
   if(!Order_id || !quantity){
@@ -26,7 +25,6 @@ const createOrUpdateCart = asyncHandler(async (req, res) => {
     existingOrderItem.quantity += quantity;
     existingOrderItem.totalAmmount += food.Unit_Price * quantity;
   } else {
-    
     cart.Order_Item.push({
       order: Order_id,
       name: food.Name,
@@ -35,7 +33,18 @@ const createOrUpdateCart = asyncHandler(async (req, res) => {
       totalAmmount: food.Unit_Price * quantity,
     });
   }
+
+  // Calculate the bill
+  cart.Bill = cart.Order_Item.reduce((total, item) => total + item.totalAmmount, 0);
+
+  // Save the cart
+  await cart.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, cart, "Item added to cart"));
 });
+
 
 const getCartById = asyncHandler( async(req, res) => {
     const customerId = req.user?._id;
