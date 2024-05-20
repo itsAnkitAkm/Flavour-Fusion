@@ -154,6 +154,7 @@ const logoutUser = asyncHandler(async(req, res)=>{
     {
       $set: {
         refreshToken: undefined,
+        accessToken: undefined,
       },
     },
   { new: true }
