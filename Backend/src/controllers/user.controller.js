@@ -4,7 +4,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
+
 
 
 
@@ -274,7 +274,13 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
   return res
   .status(200)
   .json(new ApiResponse(200, user, "avatar updated successfully"))
-})
+});
+
+const getCurrentUser = asyncHandler(async(req, res) => {
+  return res
+  .status(200)
+  .json(new ApiResponse(200, req.user, "current user fetched successfully"))
+});
 
 export {registerUser, 
   loginUser, 
@@ -282,4 +288,6 @@ export {registerUser,
   refreshAccessToken, 
   changePassword, 
   upadateAccountDetails, 
-  updateUserAvatar}
+  updateUserAvatar,
+  getCurrentUser  
+}
