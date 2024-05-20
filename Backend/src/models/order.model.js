@@ -1,10 +1,5 @@
 import mongoose from "mongoose";
 
-const OrderItem = new mongoose.Schema({
-    order: { type: mongoose.Schema.Types.ObjectId, ref: 'Food' },
-    quantity: Number,
-})
-
 
 const OrderSchema = new mongoose.Schema({
     Customer_ID: {
@@ -12,24 +7,33 @@ const OrderSchema = new mongoose.Schema({
         ref: 'User',
         required: true
       },
-      Order_Item: [ OrderItem ],
 
       Table_no: {
         type: Number,
       },
 
-      Total_Bill: {
+      Bill: {
         type: Number,
         required: true
       },
+
       GST: {
         type: Number,
         required: true
       },
-      Bill: {
+      Bag:{
+        type: Boolean,
+        default: false
+      },
+      Donate:{
+        type: Boolean,
+        default: false
+      },
+      Total_Bill: {
         type: Number,
         required: true
       }
+      
 });
 
 const Order = mongoose.model('Order', OrderSchema);

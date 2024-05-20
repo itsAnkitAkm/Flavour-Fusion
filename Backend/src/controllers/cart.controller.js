@@ -60,6 +60,45 @@ const getCartById = asyncHandler( async(req, res) => {
         
 });
 
+// Controller
+const deleteCartItem = asyncHandler(async (req, res) => {
+  const customerId = req.user?._id;
+  const { food_id } = req.body;
+
+  if(!food_id){
+      throw new ApiError(400, "Please provide all the required fields");
+  }
+
+  // Find existing cart
+  let cart = await Cart.findOne({ Customer_ID: customerId });
+  if (!cart) {
+    throw new ApiError(404, "Cart not found");
+  }
+
+  // Find the order item to be deleted
+  const orderItemIndex = cart.Order_Item.findIndex(item => item.order.equals(food_id));
+  if (orderItemIndex === -1) {
+    throw new ApiError(404, "Order item not found in the cart");
+  }
+
+  // Remove the order item from the cart
+  cart.Order_Item.splice(orderItemIndex, 1);
+
+  // Recalculate the overall bill
+  cart.Bill = cart.Order_Item.reduce((total, item) => total + item.totalAmmount, 0);
+
+  // Save the updated cart
+  await cart.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, cart, "Item removed from cart"));
+});
+
+
+
 export { createOrUpdateCart,
-         getCartById };
+         getCartById,
+         deleteCartItem
+        };
 
