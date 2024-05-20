@@ -5,47 +5,47 @@ import { Cart } from "../models/cart.model.js";
 import { Food } from "../models/food.model.js";
 
 const createOrUpdateCart = asyncHandler(async (req, res) => {
-    const customerId = req.user?._id;
-   // console.log(customerId);
-    const { Order_id, quantity } = req.body;
+  const customerId = req.user?._id;
+  const { Order_id, quantity } = req.body;
 
-    if(!Order_id || !quantity){
-        throw new ApiError(400, "Please provide all the required fields");
-    }
+  if(!Order_id || !quantity){
+    throw new ApiError(400, "Please provide all the required fields");
+  }
 
-    // Find existing cart or create a new one
-    let cart = await Cart.findOne({ Customer_ID: customerId });
-    if (!cart) {
-      cart = new Cart({ Customer_ID: customerId, Order_Item: [] });
-    }
+  // Find existing cart and food item in parallel
+  const [cart, food] = await Promise.all([
+    Cart.findOne({ Customer_ID: customerId }),
+    Food.findOne({ _id: Order_id })
+  ]);
 
-    // Update or create order item
-    const existingOrderItem = cart.Order_Item.find(item => item.order.equals(Order_id));
-    const food = await Food.findOne({ _id: Order_id });
-    if (existingOrderItem) {
-      existingOrderItem.quantity += quantity;
-      existingOrderItem.totalAmmount += food.Unit_Price * quantity;
-    } else {
-      
-      cart.Order_Item.push({
-        order: Order_id,
-        name: food.Name,
-        quantity,
-        thumbnail: food.image, 
-        totalAmmount: food.Unit_Price * quantity,
-      });
-    }
+  // If no cart is found, initialize it
+  if (!cart) {
+    cart = new Cart({ Customer_ID: customerId, Order_Item: [] });
+  }
 
-    // Calculate the overall bill
-    cart.Bill = cart.Order_Item.reduce((total, item) => total + item.totalAmmount, 0);
+  // Update or create order item
+  const existingOrderItem = cart.Order_Item.find(item => item.order.equals(Order_id));
+  if (existingOrderItem) {
+    existingOrderItem.quantity += quantity;
+    existingOrderItem.totalAmmount += food.Unit_Price * quantity;
+  } else {
+    cart.Order_Item.push({
+      order: Order_id,
+      name: food.Name,
+      quantity,
+      thumbnail: food.image, 
+      totalAmmount: food.Unit_Price * quantity,
+    });
+  }
 
-    // Save the cart
-    await cart.save();
+  // Save the cart
+  await cart.save();
 
-    return res
-      .status(201)
-      .json(new ApiResponse(200, cart, "Added to cart"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, cart, "Item added to cart"));
 });
+
 
 const getCartById = asyncHandler( async(req, res) => {
     const customerId = req.user?._id;
