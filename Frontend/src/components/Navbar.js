@@ -10,7 +10,7 @@ import { cartItem } from '../features/cart/cartSlice';
 import { useSelector } from 'react-redux';
 import Login from '../features/auth/Login';
 import { selectloggedInUser } from '../features/auth/authSlice';
-import logo from '../assests/logo.png'
+import logo from '../assests/logo.png';
 
 const user = {
   name: 'Tom Cook',
@@ -40,6 +40,7 @@ export default function Navbar({ children }) {
   const HandleLogin = () => {
     setShowLogin(!showLogin);
   };
+
   const loggedInUser = useSelector(selectloggedInUser);
   const cartItems = useSelector(cartItem);
   const cartItemsCount = cartItems.length;
@@ -82,7 +83,7 @@ export default function Navbar({ children }) {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className='hidden md:block'>
                     <div className='ml-4 flex items-center md:ml-6'>
                       <Link to='/cart'>
@@ -99,15 +100,15 @@ export default function Navbar({ children }) {
                           </span>
                         </button>
                       </Link>
-                     
-                     {showLogin &&<Login showLogin={showLogin} />}
-                        {loggedInUser===null&&<button onClick={HandleLogin} className='mx-4'>
-                        
+
+                      {showLogin && <Login showLogin={showLogin} />}
+                      {loggedInUser === null && (
+                        <button onClick={HandleLogin} className='mx-4'>
                           <li className='rounded-md px-3 py-2 text-sm font-medium list-none hover:bg-btn-red hover:text-white'>
                             Sign In
                           </li>
-                        </button>}
-                     
+                        </button>
+                      )}
 
                       {/* Profile dropdown */}
                       {loggedInUser && (

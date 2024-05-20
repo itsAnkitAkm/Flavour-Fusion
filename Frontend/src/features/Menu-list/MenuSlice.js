@@ -38,7 +38,7 @@ export const fetchProductByCategoriesAsync = createAsyncThunk(
   'product/fetchProductByCategories',
   async ( [categoryName,isVeg] ) => {
     try {
-      console.log(categoryName,isVeg);
+      // console.log(categoryName,isVeg);
       const response = await fetchProductByCategories(categoryName,isVeg);
       return response.data.data;
     } catch (error) {
