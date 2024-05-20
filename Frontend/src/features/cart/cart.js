@@ -105,7 +105,7 @@ function Cart() {
             >
               Remove All
             </button>
-            <Link to='/'>
+            <Link to='/menu'>
               <button className='bg-green-500 text-white py-2 px-4 rounded'>
                 Add More Menu
               </button>

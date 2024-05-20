@@ -36,12 +36,13 @@ export const fetchAllCategoriesAsync = createAsyncThunk(
 );
 export const fetchProductByCategoriesAsync = createAsyncThunk(
   'product/fetchProductByCategories',
-  async (name) => {
+  async ( [categoryName,isVeg] ) => {
     try {
-      const response = await fetchProductByCategories(name);
+      console.log(categoryName,isVeg);
+      const response = await fetchProductByCategories(categoryName,isVeg);
       return response.data.data;
     } catch (error) {
-      console.error('Error fetching productsBycategories:', error);
+      console.error('Error fetching products by categories:', error);
       throw error;
     }
   }
@@ -87,7 +88,7 @@ export const productSlice = createSlice({
 // export const { increment, decrement, incrementByAmount } = productSlice.actions;
 export const selectAllProducts = (state) => state.product.products;
 export const selectAllProductsByCategories = (state) => state.product.categories;
-export const categoryName=(state)=>state.product.category;
+export const categoryName=(state)=>state.product.products.CategoryName;
 
 // Export the reducer
 export default productSlice.reducer;

@@ -19,24 +19,32 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { addItemAsync, fetchCartItemAsync } from '../cart/cartSlice';
 
-
-
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default function MenuList() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-
+ 
+  const [isVeg, setIsVeg] = useState(true);
+  const [categoryName,setcategoryName]=useState();
   const products = useSelector(selectAllProducts);
-  
+
   const subCategories = useSelector(selectAllProductsByCategories);
   const dispatch = useDispatch();
+  const toogleveg=()=>{
+   
+      setIsVeg((prev)=>!prev);
+  }
   const HandleFilter = (name) => {
-    console.log(name);
-    dispatch(fetchProductByCategoriesAsync(name));
+    
+      setcategoryName(name);
+    
   };
+  useEffect(()=>{
+    // console.log(categoryName,isVeg);
+dispatch(fetchProductByCategoriesAsync([categoryName,isVeg]));
+  },[categoryName,isVeg])
 
   useEffect(() => {
     dispatch(fetchAllProductsAsync());
@@ -100,13 +108,13 @@ export default function MenuList() {
                       {subCategories.map((category) => (
                         <li key={category.Name}>
                           <a
-                        className=' cursor-pointer'
-                        onClick={(e) => {
-                          HandleFilter(category.Name);
-                        }}
-                      >
-                        {category.Name}
-                      </a>
+                            className=' cursor-pointer'
+                            onClick={(e) => {
+                              HandleFilter(category.Name);
+                            }}
+                          >
+                            {category.Name}
+                          </a>
                         </li>
                       ))}
                     </ul>
@@ -120,7 +128,7 @@ export default function MenuList() {
         <main className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8    '>
           <div className='flex  items-baseline justify-between border-b border-gray-200 pb-6 pt-24  top-0   xl:fixed '>
             <h1 className='text-4xl ml-7 font-bold tracking-tight text-gray-900'>
-               Menu
+              Menu
             </h1>
 
             <div className='flex items-center '>
@@ -134,7 +142,7 @@ export default function MenuList() {
                     />
                   </Menu.Button> */}
                 </div>
-{/* 
+                {/* 
                 <Transition
                   as={Fragment}
                   enter='transition ease-out duration-100'
@@ -216,7 +224,7 @@ export default function MenuList() {
               {/* Product grid */}
               <div className='lg:col-span-3'>
                 {/* Menu Grid Start from here */}
-                <MenuGrid products={products} />
+                <MenuGrid products={products} toogleveg={toogleveg} isVeg={isVeg}/>
               </div>
             </div>
           </section>
@@ -227,16 +235,31 @@ export default function MenuList() {
 }
 
 // menu grid
-function MenuGrid({ products }) {
+function MenuGrid({ products ,toogleveg,isVeg}) {
+ 
   const dispatch = useDispatch();
-  
+
   // console.log(products);
-  let Name='';
-  Name=useSelector(categoryName);
+  let Name = '';
+  Name = useSelector(categoryName);
   return (
     <div className='bg-white'>
       <div className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8'>
-      <h1 className='text-2xl font-bold'>{Name}</h1>
+        <div className=' flex justify-between'>
+        <h1 className='text-2xl font-bold'>{Name}</h1>
+        <div className="flex items-center space-x-4 p-4 bg-white rounded-md">
+      <span className={`text-gray-700 ${isVeg ? 'font-semibold' : ''}`}>Veg</span>
+      <div
+        onClick={toogleveg}
+        className={`relative w-16 h-8 ${isVeg ? 'bg-green-600' : 'bg-red-600'} rounded-full cursor-pointer transition-colors duration-300`}
+      >
+        <div
+          className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${isVeg ? 'translate-x-0' : 'translate-x-9'}`}
+        />
+      </div>
+      <span className={`text-gray-700 ${!isVeg ? 'font-semibold' : ''}`}>Non-Veg</span>
+    </div>
+        </div>
         <div className='mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2  '>
           {products?.map((product) => (
             <div
@@ -252,7 +275,9 @@ function MenuGrid({ products }) {
               </div>
               <div className='mt-5'>
                 <div className='flex justify-between'>
-                  <div className='text-green-600 text-lg'>₹{product.Unit_Price}</div>
+                  <div className='text-green-600 text-lg'>
+                    ₹{product.Unit_Price}
+                  </div>
                   <div className='text-xl'>{product.Name}</div>
                 </div>
                 <div className='mt-2'>{product.Description}</div>
@@ -270,7 +295,6 @@ function MenuGrid({ products }) {
                         marginTop: '2px',
                       }}
                     />
-                      
                   </button>
                 </div>
               </div>
