@@ -1,27 +1,29 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchCartItem, addItem, updateItem, deleteItem } from './cartAPI'; // Corrected import for deleteItem
+import { fetchCartItem, addItem, updateItem, deleteItem ,resetCart} from './cartAPI';
 
 const initialState = {
   items: [],
+  bill: 0,
   status: 'idle',
 };
 
+// Async actions
 export const fetchCartItemAsync = createAsyncThunk(
   'cart/fetchCartItem',
   async () => {
     const response = await fetchCartItem();
-    // console.log(response);
-    return response.data.data.Order_Item;
+    return response.data.data;
   }
 );
 
-export const addItemAsync = createAsyncThunk('cart/addItem', async (item) => {
-  console.log(item);
-  const newitem = { "Order_id":item._id, "quantity": 1 };
-  console.log(newitem);
-  const response = await addItem(newitem);
-  return response.data.data;
-});
+export const addItemAsync = createAsyncThunk(
+  'cart/addItem',
+  async (item) => {
+    const newItem = { Order_id: item._id, quantity: 1 };
+    const response = await addItem(newItem);
+    return response.data.data;
+  }
+);
 
 export const updateItemAsync = createAsyncThunk(
   'cart/updateItem',
@@ -33,19 +35,21 @@ export const updateItemAsync = createAsyncThunk(
 
 export const deleteItemAsync = createAsyncThunk(
   'cart/deleteItem',
-  async (id) => {
-    await deleteItem(id);
-    return id;
+  async (item) => {
+    await deleteItem({ food_id: item.order });
+    return item.order;
   }
 );
-export const resetCartAsync = createAsyncThunk('cart/resetCart', async () => {
-  const response = await fetchCartItem();
-  const items = response.data.data;
-  for (let item of items) {
-    await deleteItem(item.id);
-  }
-});
 
+export const resetCartAsync = createAsyncThunk(
+  'cart/resetCart',
+  async () => {
+   await resetCart();
+   return {response:"ok"}
+  }
+);
+
+// Slice
 export const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -57,7 +61,13 @@ export const cartSlice = createSlice({
       })
       .addCase(fetchCartItemAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.items = action.payload;
+        state.items = action.payload.Order_Item;
+        state.bill = action.payload.Bill;
+      })
+      .addCase(fetchCartItemAsync.rejected, (state) => {
+        state.status = 'idle';
+        state.items = [];
+        state.bill = 0;
       })
       .addCase(addItemAsync.pending, (state) => {
         state.status = 'loading';
@@ -71,33 +81,30 @@ export const cartSlice = createSlice({
       })
       .addCase(updateItemAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        const index = state.items.findIndex(
-          (item) => item.id === action.payload.id
-        );
-        state.items[index] = action.payload;
+        const index = state.items.findIndex(item => item.id === action.payload.id);
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
       })
       .addCase(deleteItemAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(deleteItemAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        const index = state.items.findIndex(
-          (item) => item.id === action.payload
-        );
-        if (index !== -1) {
-          state.items.splice(index, 1);
-        }
+        state.items = state.items.filter(item => item.order !== action.payload);
       })
       .addCase(resetCartAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(resetCartAsync.fulfilled, (state, action) => {
+      .addCase(resetCartAsync.fulfilled, (state) => {
         state.status = 'idle';
-        state.items=[];
+        state.items = [];
       });
   },
 });
 
+// Selectors
 export const cartItem = (state) => state.cart.items;
+export const Bill = (state) => state.cart.bill;
 
 export default cartSlice.reducer;

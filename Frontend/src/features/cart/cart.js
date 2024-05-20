@@ -6,6 +6,7 @@ import {
   updateItemAsync,
   resetCartAsync,
 } from './cartSlice';
+import { Bill } from './cartSlice';
 import { deleteItemAsync } from './cartSlice';
 import {
   Button,
@@ -55,6 +56,7 @@ function Cart() {
       <div className='flex flex-col xl:flex-row xl:justify-between'>
         <div className='flex flex-col gap-3 xl:flex-grow '>
           {cartItems.map((item) => (
+            
             <div
               key={item._id}
               className='flex flex-col p-4 bg-neutral-100 shadow-md'
@@ -69,7 +71,7 @@ function Cart() {
                   <div>
                     <h2 className='text-lg font-bold'>{item.name}</h2>
                     <button
-                      onClick={() => dispatch(deleteItemAsync(item._id))}
+                      onClick={() => dispatch(deleteItemAsync(item))}
                       className='text-red-500 text-sm'
                     >
                       Remove
@@ -123,11 +125,11 @@ function Cart() {
   );
 }
 
-function ShoppingCartSummary({ totalAmount, totalItems }) {
+function ShoppingCartSummary({  totalItems }) {
   const [addCarryBag, setAddCarryBag] = useState(false);
   const [addHope, setAddHope] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-
+ const totalAmount=useSelector(Bill);
   let totalPrice = totalAmount + 9.42;
 
   if (addCarryBag) {
