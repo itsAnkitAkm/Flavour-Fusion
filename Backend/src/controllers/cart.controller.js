@@ -9,22 +9,18 @@ const createOrUpdateCart = asyncHandler(async (req, res) => {
   const { Order_id, quantity } = req.body;
 
   if(!Order_id || !quantity){
-    throw new ApiError(400, "Please provide all the required fields");
+      throw new ApiError(400, "Please provide all the required fields");
   }
 
-  // Find existing cart and food item in parallel
-  const [cart, food] = await Promise.all([
-    Cart.findOne({ Customer_ID: customerId }),
-    Food.findOne({ _id: Order_id })
-  ]);
-
-  // If no cart is found, initialize it
+  // Find existing cart or create a new one
+  let cart = await Cart.findOne({ Customer_ID: customerId });
   if (!cart) {
     cart = new Cart({ Customer_ID: customerId, Order_Item: [] });
   }
 
   // Update or create order item
   const existingOrderItem = cart.Order_Item.find(item => item.order.equals(Order_id));
+  const food = await Food.findOne({ _id: Order_id });
   if (existingOrderItem) {
     existingOrderItem.quantity += quantity;
     existingOrderItem.totalAmmount += food.Unit_Price * quantity;
@@ -37,6 +33,9 @@ const createOrUpdateCart = asyncHandler(async (req, res) => {
       totalAmmount: food.Unit_Price * quantity,
     });
   }
+
+  // Calculate the bill
+  cart.Bill = cart.Order_Item.reduce((total, item) => total + item.totalAmmount, 0);
 
   // Save the cart
   await cart.save();
