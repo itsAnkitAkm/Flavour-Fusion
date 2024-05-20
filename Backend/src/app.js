@@ -39,5 +39,11 @@ app.use("/api/v1/cart", cartRouter)
 
 // http://localhost:8000/api/v1/cart
 
+import orderRouter from './routes/order.routes.js'
+
+app.use("/api/v1/order", orderRouter)
+
+// http://localhost:8000/api/v1/order
+
 
 export default app;

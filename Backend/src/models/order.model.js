@@ -8,8 +8,18 @@ const OrderSchema = new mongoose.Schema({
         required: true
       },
 
+      Cart_ID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cart',
+        required: true
+      },
+
       Table_no: {
         type: Number,
+      },
+
+      TakeAway:{
+        type: Boolean
       },
 
       Bill: {
@@ -17,7 +27,7 @@ const OrderSchema = new mongoose.Schema({
         required: true
       },
 
-      GST: {
+      Gst: {
         type: Number,
         required: true
       },
