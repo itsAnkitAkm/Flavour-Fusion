@@ -95,10 +95,29 @@ const deleteCartItem = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, cart, "Item removed from cart"));
 });
 
+const deleteCart = asyncHandler(async (req, res) => {
+  const customerId = req.user?._id;
+
+  // Find existing cart
+  let cart = await Cart.findOne({ Customer_ID: customerId });
+  if (!cart) {
+    throw new ApiError(404, "Cart not found");
+  }
+
+  // Delete the cart
+  await Cart.deleteOne({ Customer_ID: customerId });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Cart deleted successfully"));
+});
+
+
 
 
 export { createOrUpdateCart,
          getCartById,
-         deleteCartItem
+         deleteCartItem,
+         deleteCart
         };
 
