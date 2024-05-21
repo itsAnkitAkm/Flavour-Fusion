@@ -11,6 +11,10 @@ dotenv.config({
     path: './.env'
 });
 
+
+
+
+
 // Connect to the MongoDB database using the connectDB function
 connectDB()
  .then(() => {
