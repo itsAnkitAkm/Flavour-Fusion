@@ -248,7 +248,7 @@ function MenuGrid({ products ,toogleveg,isVeg}) {
         <div className=' flex justify-between'>
         <h1 className='text-2xl font-bold'>{Name}</h1>
         <div className="flex items-center space-x-4 p-4 bg-white rounded-md">
-      <span className={`text-gray-700 ${isVeg ? 'font-semibold' : ''}`}>Veg</span>
+      <span className={`text-gray-700 ${isVeg ? 'font-semibold' : ''}`}>Pure-Veg</span>
       <div
         onClick={toogleveg}
         className={`relative w-16 h-8 ${isVeg ? 'bg-green-600' : 'bg-red-600'} rounded-full cursor-pointer transition-colors duration-300`}
@@ -257,7 +257,7 @@ function MenuGrid({ products ,toogleveg,isVeg}) {
           className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${isVeg ? 'translate-x-0' : 'translate-x-9'}`}
         />
       </div>
-      <span className={`text-gray-700 ${!isVeg ? 'font-semibold' : ''}`}>Non-Veg</span>
+      <span className={`text-gray-700 ${!isVeg ? 'font-semibold' : ''}`}></span>
     </div>
         </div>
         <div className='mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2  '>

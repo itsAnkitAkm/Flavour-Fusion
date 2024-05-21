@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBrowserRouter,RouterProvider} from 'react-router-dom'
 import {MenuPage,CartPage, SignUpPage } from './Pages'
 import Logout from './features/auth/Logout';
 import CheckoutPage from './Pages/CheckoutPage';
 import UserProfilePage from './Pages/UserProfilePage';
 import HomePage from './Pages/HomePage';
+import { useDispatch } from 'react-redux';
+import { verifyTokenAsync } from './features/auth/authSlice';
 
 const router=createBrowserRouter([
   {
@@ -42,6 +44,10 @@ const router=createBrowserRouter([
 
 ])
 function App() {
+  const dispatch=useDispatch();
+  useEffect(()=>{
+    dispatch(verifyTokenAsync());
+  },[dispatch])
   return (
     <div >
    

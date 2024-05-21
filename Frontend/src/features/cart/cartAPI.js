@@ -28,7 +28,27 @@ export function updateItem(id, item) {
   return axios.patch(`http://localhost:8080/cart/${id}`, item);
 }
 
-export function deleteItem(id) {
-  return axios.delete(`http://localhost:8080/cart/${id}`);
+export function deleteItem(item) {
+  const token = getToken();
+
+  return axios.delete(`http://localhost:8000/api/v1/cart/remove-item`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    data: item
+  });
 }
+export function resetCart() {
+  const token = getToken();
+
+  return axios.delete('http://localhost:8000/api/v1/cart/delete-cart', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    
+  });
+}
+
 

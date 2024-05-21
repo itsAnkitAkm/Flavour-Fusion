@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { Link, Navigate } from 'react-router-dom';
 import { selectloggedInUser, usererror } from './authSlice';
-import { checkUserAsync } from './authSlice';
+import { loginUserAsync } from './authSlice';
 function Login({ showLogin }) {
   const [Open, setOpen] = useState(false);
   const handleopen = () => {
@@ -71,7 +71,7 @@ function Login({ showLogin }) {
                   noValidate
                   onSubmit={handleSubmit((data) => {
                     dispatch(
-                      checkUserAsync({
+                      loginUserAsync({
                         email: data.email,
                         password: data.password,
                       })
