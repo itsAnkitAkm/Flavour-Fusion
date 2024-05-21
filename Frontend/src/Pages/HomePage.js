@@ -2,34 +2,30 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/footer';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllCategoriesAsync, selectAllProductsByCategories } from '../features/Menu-list/MenuSlice';
+import { useNavigate } from 'react-router-dom';
+import { fetchAllCategoriesAsync, fetchProductByCategoriesAsync, selectAllProductsByCategories } from '../features/Menu-list/MenuSlice';
 import banner1 from '../assests/banner1.png';
 import banner2 from '../assests/banner2.png';
 
 function HomePage() {
-  const [currentIndex, setCurrentIndex] = useState(1);
-  const images = [
-    banner1,
-    banner2,
-  ];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [banner1, banner2];
+  const categories = useSelector(selectAllProductsByCategories);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const back = () => {
-    if (currentIndex > 1) {
-      setCurrentIndex(currentIndex - 1);
-    }
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
   };
 
   const next = () => {
-    if (currentIndex < images.length) {
-      setCurrentIndex(currentIndex + 1);
-    } else if (currentIndex <= images.length) {
-      setCurrentIndex(images.length - currentIndex + 1);
-    }
+    setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
 
-  const categories = useSelector(selectAllProductsByCategories);
-  
-  const dispatch = useDispatch();
+  // const handleClick = async(category) => {
+  //  await  dispatch(fetchProductByCategoriesAsync([category, false]));
+  //   navigate('/menu', { replace: true });
+  // };
 
   useEffect(() => {
     dispatch(fetchAllCategoriesAsync());
@@ -43,19 +39,18 @@ function HomePage() {
           {/* Image slider */}
           <article className="relative w-full flex flex-shrink-0 overflow-hidden shadow-2xl">
             <div className="rounded-full bg-gray-600 text-black absolute top-5 right-5 text-sm px-2 text-center z-10">
-              <span>{currentIndex}</span>/
-              <span>{images.length}</span>
+              <span>{currentIndex + 1}</span>/<span>{images.length}</span>
             </div>
 
             {images.map((image, index) => (
               <figure
                 key={index}
-                className={`h-60 md:h-96 ${currentIndex === index + 1 ? 'block' : 'hidden'}`}
+                className={`h-60 md:h-96 ${currentIndex === index ? 'block' : 'hidden'}`}
                 style={{ transition: 'opacity 0.3s' }}
               >
                 <img
                   src={image}
-                  alt="Image"
+                  alt={`Banner ${index + 1}`}
                   className="absolute inset-0 z-10 h-full w-full object-cover"
                 />
               </figure>
@@ -114,7 +109,9 @@ function HomePage() {
                 style={{ width: '100%', maxWidth: '320px', margin: 'auto' }}
               >
                 <img src={category.image} alt={category.Name} className="w-full h-56 object-cover" />
-                <div className="p-4 text-center">
+                <div className="p-4 text-center cursor-pointer" 
+                // onClick={() => handleClick(category.Name)}
+                >
                   <h3 className="text-lg font-semibold">{category.Name}</h3>
                 </div>
               </div>

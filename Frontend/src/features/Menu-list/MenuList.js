@@ -26,7 +26,7 @@ function classNames(...classes) {
 export default function MenuList() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
  
-  const [isVeg, setIsVeg] = useState(true);
+  const [isVeg, setIsVeg] = useState(false);
   const [categoryName,setcategoryName]=useState();
   const products = useSelector(selectAllProducts);
 
