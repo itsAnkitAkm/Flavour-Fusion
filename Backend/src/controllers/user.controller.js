@@ -45,19 +45,20 @@ const registerUser = asyncHandler(async (req, res) => {
   // upload them to cloudinary, avatar
  // Check if req.files and req.files.avatar exist before accessing its properties
  let avatar = { url: "" };
-if (req.files && req.files.avatar) {
-  const avatarLocalPath = req.files.avatar[0]?.path;
-  
-  if (avatarLocalPath) {
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-  
-    if (!avatar) {
-      throw new ApiError(400, "Avatar file is required");
-    }
-  }
-}
-
-
+ if (req.files && req.files.avatar) {
+   const avatarLocalPath = req.files.avatar[0]?.path;
+   
+   if (avatarLocalPath) {
+     avatar = await uploadOnCloudinary(avatarLocalPath);
+   
+     if (!avatar) {
+       throw new ApiError(400, "Avatar file is required");
+     }
+   }
+ }
+ 
+ console.log(avatar);
+ 
  
 
   // create user object - create entry in db
