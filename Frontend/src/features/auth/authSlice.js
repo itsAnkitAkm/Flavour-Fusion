@@ -11,8 +11,8 @@ export const createUserAsync = createAsyncThunk(
   'auth/createUser',
   async (items) => {
     const response = await createUser(items);
-
-    return response;
+    
+    return response.user;
   }
 );
 
