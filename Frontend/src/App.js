@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createBrowserRouter,RouterProvider} from 'react-router-dom'
-import {MenuPage,CartPage, SignUpPage } from './Pages'
+import {MenuPage,CartPage, SignUpPage, AboutUsPage, ContactUsPage } from './Pages'
 import Logout from './features/auth/Logout';
 import CheckoutPage from './Pages/CheckoutPage';
 import UserProfilePage from './Pages/UserProfilePage';
@@ -38,16 +38,24 @@ const router=createBrowserRouter([
   path:'/userprofile',
   element:<UserProfilePage/>
 },
+{
+  path:'/about-us',
+  element:<AboutUsPage/>
+},
+{
+  path:'/contact-us',
+  element:<ContactUsPage/>
+},
 
 
 
 
 ])
 function App() {
-  const dispatch=useDispatch();
-  useEffect(()=>{
-    dispatch(verifyTokenAsync());
-  },[dispatch])
+  // const dispatch=useDispatch();
+  // useEffect(()=>{
+  //   dispatch(verifyTokenAsync());
+  // },[dispatch])
   return (
     <div >
    

@@ -30,7 +30,7 @@ function Login({ showLogin }) {
     formState: { errors },
   } = useForm();
 
-  console.log(errors);
+  
   useEffect(() => {
     if (showLogin) {
       setOpen(true);

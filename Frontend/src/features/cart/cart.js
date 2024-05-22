@@ -5,6 +5,7 @@ import {
   cartItem,
   updateItemAsync,
   resetCartAsync,
+  CartId,
 } from './cartSlice';
 import { Bill } from './cartSlice';
 import { deleteItemAsync } from './cartSlice';
@@ -20,6 +21,7 @@ import {
   Checkbox,
 } from '@material-tailwind/react';
 import { Link, useNavigate } from 'react-router-dom';
+import { createOrderAsync, selectCurrentOrder } from '../order/orderSlice';
 
 function Cart() {
   const dispatch = useDispatch();
@@ -32,11 +34,6 @@ function Cart() {
   const handleQuantity = (e, item) => {
     dispatch(updateItemAsync({ ...item, quantity: +e.target.value }));
   };
-
-  const totalAmount = cartItems.reduce(
-    (amount, item) => item.price * item.quantity + amount,
-    0
-  );
 
   const totalItems = cartItems.reduce(
     (total, item) => item.quantity + total,
@@ -56,7 +53,6 @@ function Cart() {
       <div className='flex flex-col xl:flex-row xl:justify-between'>
         <div className='flex flex-col gap-3 xl:flex-grow '>
           {cartItems.map((item) => (
-            
             <div
               key={item._id}
               className='flex flex-col p-4 bg-neutral-100 shadow-md'
@@ -115,22 +111,22 @@ function Cart() {
           </div>
         </div>
         <div className='p-4 '>
-          <ShoppingCartSummary
-            totalAmount={totalAmount}
-            totalItems={totalItems}
-          />
+          <ShoppingCartSummary totalItems={totalItems} />
         </div>
       </div>
     </div>
   );
 }
 
-function ShoppingCartSummary({  totalItems }) {
+function ShoppingCartSummary({ totalItems }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [addCarryBag, setAddCarryBag] = useState(false);
   const [addHope, setAddHope] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
- const totalAmount=useSelector(Bill);
-  let totalPrice = totalAmount + 9.42;
+  const totalAmount = useSelector(Bill);
+  const cart_id = useSelector(CartId);
+  const gst = totalAmount * 0.05;
+  let totalPrice = totalAmount + gst;
 
   if (addCarryBag) {
     totalPrice += 6;
@@ -140,12 +136,47 @@ function ShoppingCartSummary({  totalItems }) {
     totalPrice += 5;
   }
 
-  const handleDialog = () => {
-    setOpenDialog(true);
+  const [formData, setFormData] = useState({
+    tableNo: '',
+    takeAway: false,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleDineOptionChange = (e) => {
+    const { value } = e.target;
+    setFormData((prevData) => ({ ...prevData, takeAway: value === 'TakeAway' }));
+  };
+
+  const handleOrder = async () => {
+    if (formData.tableNo !== '') {
+      const order = {
+        Cart_ID: cart_id,
+        Table_no: formData.tableNo,
+        TakeAway: formData.takeAway,
+        Bill: totalAmount,
+        Gst: gst,
+        Bag: addCarryBag,
+        Donate: addHope,
+      };
+
+      const result = await dispatch(createOrderAsync(order));
+      if (result.meta.requestStatus === 'fulfilled') {
+        // alert('Order Placed Successfully....');
+        navigate('/checkout');
+      } else {
+        alert('Failed to place order. Please try again.');
+      }
+    } else {
+      alert("Enter the table number...");
+    }
   };
 
   return (
-    <div className='flex flex-col p-4 bg-white shadow-md'>
+    <div className='flex flex-col p-4 bg-white shadow-md max-w-lg mx-auto'>
       <div className='flex justify-center items-center mb-4'>
         <h2 className='text-lg font-bold'>{totalItems} ITEM</h2>
       </div>
@@ -154,7 +185,7 @@ function ShoppingCartSummary({  totalItems }) {
           Subtotal <span className='font-bold'>₹{totalAmount.toFixed(2)}</span>
         </p>
         <p className='flex justify-between'>
-          GST <span className='font-bold'>9.42</span>
+          GST <span className='font-bold'>₹{gst.toFixed(2)}</span>
         </p>
       </div>
       <div className='flex items-center mb-4'>
@@ -162,6 +193,7 @@ function ShoppingCartSummary({  totalItems }) {
           id='carryBag'
           checked={addCarryBag}
           onChange={() => setAddCarryBag(!addCarryBag)}
+          color='primary'
         />
         <label htmlFor='carryBag' className='ml-2'>
           ₹6.00 Tick to add a large carry bag.
@@ -172,118 +204,210 @@ function ShoppingCartSummary({  totalItems }) {
           id='addHope'
           checked={addHope}
           onChange={() => setAddHope(!addHope)}
+          color='primary'
         />
         <label htmlFor='addHope' className='ml-2'>
           Donate ₹5.00 Tick to Add Hope. Our goal is to feed 20 million people
           by 2024.
         </label>
       </div>
+      <div className='flex items-center mb-4 mx-8'>
+        <Typography className='w-1/2' variant='h6'>
+          Table No
+        </Typography>
+        <Input
+          className='w-1/2'
+          type='number'
+          name='tableNo'
+          placeholder='Table No'
+          size='lg'
+          value={formData.tableNo}
+          onChange={handleChange}
+        />
+      </div>
+      <Typography className='-mb-2 m-5' variant='h6'>
+        Dine Option
+      </Typography>
+      <div className='flex mb-8 justify-around'>
+        <div className='flex items-center gap-x-3'>
+          <input
+            type='radio'
+            name='dineOption'
+            value='DineIn'
+            checked={!formData.takeAway}
+            onChange={handleDineOptionChange}
+          />
+          <label
+            htmlFor='dineIn'
+            className='block text-sm font-medium leading-6 text-gray-900'
+          >
+            Dine In
+          </label>
+        </div>
+        <div className='flex items-center gap-x-3'>
+          <input
+            type='radio'
+            name='dineOption'
+            value='TakeAway'
+            checked={formData.takeAway}
+            onChange={handleDineOptionChange}
+          />
+          <label
+            htmlFor='takeAway'
+            className='block text-sm font-medium leading-6 text-gray-900'
+          >
+            Take Away
+          </label>
+        </div>
+      </div>
+      <div className='h-[2px] bg-gray-400 m-8'></div>
+      <div className='mx-8 mb-5 flex justify-between'>
+        <span>Total Amount:</span>
+        <span>₹{totalPrice.toFixed(2)}</span>
+      </div>
       <button
-        onClick={handleDialog}
+        onClick={handleOrder}
         className='bg-red-500 text-white py-2 px-4 rounded-full hover:font-bold'
       >
-        Checkout ₹{totalPrice.toFixed(2)}
+        Confirm Order
       </button>
-
-      {openDialog && <DialogDefault setOpenDialog={setOpenDialog} />}
     </div>
   );
 }
 
-function DialogDefault({ setOpenDialog }) {
-  const [formData, setFormData] = useState({
-    email: '',
-    name: '',
-    tableNo: '',
-    phoneNo: '',
-  });
 
-  const navigate = useNavigate();
 
-  const handleConfirm = () => {
-    // Assuming form validation is done
-    navigate('/checkout', { state: formData });
-  };
+// function DialogDefault({ setOpenDialog, addCarryBag, addHope }) {
+//   const [formData, setFormData] = useState({
+//     email: '',
+//     name: '',
+//     tableNo: '',
+//     phoneNo: '',
+//     carryBag: addCarryBag,
+//     hope: addHope,
+//     dineOption: 'Dine In',
+//   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
+//   const navigate = useNavigate();
 
-  return (
-    <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md xl:items-center xl:justify-center'>
-      <Dialog
-        size='xs'
-        open={true}
-        handler={handleClose}
-        className='bg-transparent shadow-none fixed inset-0 justify-between top-[23%] -left-4 '
-      >
-        <Card className='mx-auto w-full max-w-[42rem]'>
-          <CardBody className='flex flex-col gap-4'>
-            <Typography variant='h4' color='blue-gray'>
-              Checkout
-            </Typography>
+//   const handleConfirm = () => {
+//     // Assuming form validation is done
+//     navigate('/checkout', { state: formData });
+//   };
 
-            <Typography className='-mb-2' variant='h6'>
-              Your Email
-            </Typography>
-            <Input
-              type='email'
-              name='email'
-              placeholder='Email'
-              size='lg'
-              value={formData.email}
-              onChange={handleChange}
-            />
-            <Typography className='-mb-2' variant='h6'>
-              Name
-            </Typography>
-            <Input
-              type='text'
-              name='name'
-              placeholder='Name'
-              size='lg'
-              value={formData.name}
-              onChange={handleChange}
-            />
-            <Typography className='-mb-2' variant='h6'>
-              Table No
-            </Typography>
-            <Input
-              type='number'
-              name='tableNo'
-              placeholder='Table No'
-              size='lg'
-              value={formData.tableNo}
-              onChange={handleChange}
-            />
-            <Typography className='-mb-2' variant='h6'>
-              Phone No
-            </Typography>
-            <Input
-              type='number'
-              name='phoneNo'
-              placeholder='Phone No'
-              size='lg'
-              value={formData.phoneNo}
-              onChange={handleChange}
-            />
-          </CardBody>
-          <CardFooter className='pt-0'>
-            <button
-              onClick={handleConfirm}
-              className='bg-red-500 text-white py-2 px-4 rounded-full hover:font-bold'
-            >
-              Confirm
-            </button>
-          </CardFooter>
-        </Card>
-      </Dialog>
-    </div>
-  );
-}
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData((prevData) => ({ ...prevData, [name]: value }));
+//   };
+//   const handleClose = () => {
+//     setOpenDialog(false);
+//   };
+
+//   return (
+//     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md xl:items-center xl:justify-center'>
+//       <Dialog
+//         size='xs'
+//         open={true}
+//         handler={handleClose}
+//         className='bg-transparent shadow-none fixed inset-0 justify-between top-[10%] -left-4 '
+//       >
+//         <Card className='mx-auto w-full max-w-[42rem]'>
+//           <CardBody className='flex flex-col gap-4'>
+//             <Typography variant='h4' color='blue-gray'>
+//               Checkout
+//             </Typography>
+
+//             <Typography className='-mb-2' variant='h6'>
+//               Your Email
+//             </Typography>
+//             <Input
+//               type='email'
+//               name='email'
+//               placeholder='Email'
+//               size='lg'
+//               value={formData.email}
+//               onChange={handleChange}
+//             />
+//             <Typography className='-mb-2' variant='h6'>
+//               Name
+//             </Typography>
+//             <Input
+//               type='text'
+//               name='name'
+//               placeholder='Name'
+//               size='lg'
+//               value={formData.name}
+//               onChange={handleChange}
+//             />
+//             <Typography className='-mb-2' variant='h6'>
+//               Table No
+//             </Typography>
+//             <Input
+//               type='number'
+//               name='tableNo'
+//               placeholder='Table No'
+//               size='lg'
+//               value={formData.tableNo}
+//               onChange={handleChange}
+//             />
+//             <Typography className='-mb-2' variant='h6'>
+//               Phone No
+//             </Typography>
+//             <Input
+//               type='number'
+//               name='phoneNo'
+//               placeholder='Phone No'
+//               size='lg'
+//               value={formData.phoneNo}
+//               onChange={handleChange}
+//             />
+//             <Typography className='-mb-2' variant='h6'>
+//               Dine Option
+//             </Typography>
+
+//             <div className='flex  items-center gap-x-3'>
+//               <input
+//                 type='radio'
+//                 name='dineOption'
+//                 value='DineIn'
+//                 checked={formData.dineOption === 'DineIn'}
+//                 onChange={handleChange}
+//               />
+//               <label
+//                 htmlFor='cash'
+//                 className='block text-sm font-medium leading-6 text-gray-900'
+//               >
+//                 Dine In
+//               </label>
+//             </div>
+//             <div className='flex  items-center gap-x-3'>
+//               <input
+//                 type='radio'
+//                 name='dineOption'
+//                 value='TakeAway'
+//                 checked={formData.dineOption === 'TakeAway'}
+//                 onChange={handleChange}
+//               />
+//               <label
+//                 htmlFor='cash'
+//                 className='block text-sm font-medium leading-6 text-gray-900'
+//               >
+//                 Take Away
+//               </label>
+//             </div>
+//           </CardBody>
+//           <CardFooter className='pt-0'>
+//             <button
+//               onClick={handleConfirm}
+//               className='bg-red-500 text-white py-2 px-4 rounded-full hover:font-bold'
+//             >
+//               Confirm
+//             </button>
+//           </CardFooter>
+//         </Card>
+//       </Dialog>
+//     </div>
+//   );
+// }
 
 export default Cart;

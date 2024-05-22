@@ -1,14 +1,31 @@
+import axios from 'axios';
+
+function getToken() {
+  return sessionStorage.getItem('accessToken');
+}
+
 export function createOrder(order) {
+  const token = getToken();
   return new Promise(async (resolve) => {
-    const response = await fetch('http://localhost:8080/order', {
-      method: 'POST',
-      body: JSON.stringify(order),
-      headers: { 'content-type': 'application/json' },
-    });
-    const data = await response.json();
-    resolve({ data });
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/v1/order/create-order',
+        order,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      resolve({ data: response.data });
+    } catch (error) {
+      console.error('Error creating order:', error);
+      resolve({ error: error.message });
+    }
   });
 }
+
 
 export function updateOrder(order) {
   return new Promise(async (resolve) => {

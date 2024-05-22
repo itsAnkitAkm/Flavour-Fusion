@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import { createUserAsync, selectloggedInUser } from './authSlice';
+import { createUserAsync, selectloggedInUser, usererror } from './authSlice';
 import { Link, Navigate } from 'react-router-dom';
-import Logo from '../../assests/ff.png';
+import Logo from '../../assets/ff.gif';
 import FormData from 'form-data';
+import Login from './Login';
 
 function SignUp() {
   const dispatch = useDispatch();
   const user = useSelector(selectloggedInUser);
-
+  // const error=useSelector(usererror);
   const {
     register,
     handleSubmit,
@@ -19,7 +20,10 @@ function SignUp() {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-
+  const [showLogin, setShowLogin] = useState(false);
+  const HandleLogin = () => {
+    setShowLogin(!showLogin);
+  };
   const onImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedImage(URL.createObjectURL(e.target.files[0]));
@@ -36,12 +40,12 @@ function SignUp() {
     formData.append('password', data.password);
     formData.append('username', data.username);
     if (imageFile) {
-      formData.append('avatar', imageFile,imageFile.name);
+      formData.append('avatar', imageFile, imageFile.name);
     }
     try {
       await dispatch(createUserAsync(formData));
     } catch (error) {
-      console.log("Error on registering user:", error);
+      console.log('Error on registering user:', error);
     }
   };
 
@@ -97,10 +101,9 @@ function SignUp() {
             //   } catch (error) {
             //     console.log("Error on registering user:",error);
             //   }
-              
+
             // })}
             onSubmit={handleSubmit(onSubmit)}
-           
           >
             <div className='flex space-x-4'>
               <div className='w-1/2'>
@@ -285,6 +288,7 @@ function SignUp() {
                   />
                 )}
               </div>
+              {/* {error && <p className='text-red-500'>{error.message}</p>} */}
             </div>
 
             <div>
@@ -307,12 +311,13 @@ function SignUp() {
 
           <div className='mt-4 font-semibold text-sm text-slate-500 text-center md:text-left'>
             Already have an account?{' '}
-            <Link
+            {showLogin && <Login showLogin={showLogin} />}
+            <button
               className='text-red-600 hover:underline hover:underline-offset-4'
-              to='/signin'
+              onClick={HandleLogin}
             >
               Sign In
-            </Link>
+            </button>
           </div>
         </div>
       </section>
