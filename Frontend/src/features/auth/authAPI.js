@@ -20,10 +20,10 @@ export async function createUser(userInfo) {
     const accessToken = response.data.accessToken;
     
     storeToken(accessToken);
-    return response.data;
+    return response.data.user;
   } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
+    console.error('Error creating user:', error.message);
+    return error.message;
   }
 }
 
@@ -58,7 +58,7 @@ export const checkUser = async (token) => {
 
 export const signOutUser = async () => {
   const token = getToken();
-  console.log('First time token:', token);
+  // console.log('First time token:', token);
 
   try {
     await axios.post(
@@ -70,7 +70,7 @@ export const signOutUser = async () => {
         },
       }
     );
-    console.log('Second time token:', getToken());
+    // console.log('Second time token:', getToken());
 
     // Optionally clear the token from the local storage or cookies
     sessionStorage.removeItem('accessToken');
@@ -78,6 +78,8 @@ export const signOutUser = async () => {
 
     return { data: 'success' };
   } catch (error) {
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('refreshToken');
     console.error('Error logging out:', error);
     throw new Error('Logout failed');
   }

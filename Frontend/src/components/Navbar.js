@@ -4,30 +4,23 @@ import {
   Bars3Icon,
   ShoppingBagIcon,
   XMarkIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { cartItem } from '../features/cart/cartSlice';
 import { useSelector } from 'react-redux';
 import Login from '../features/auth/Login';
 import { selectloggedInUser } from '../features/auth/authSlice';
-import logo from '../assests/logo.png';
-
-const user = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-};
+import logo from '../assets/logo.png';
 
 const navigation = [
-  { name: 'Menu', href: '/menu', current: true },
-  { name: 'Deal', href: '#', current: false },
-  { name: 'About Us', href: '#', current: false },
+  { name: 'Menu', href: '/menu', current: false },
+  { name: 'About Us', href: '/about-us', current: false },
+  { name: 'Contact Us', href: '/contact-us', current: false },
 ];
 
 const userNavigation = [
-  { name: 'Your Profile', link: '#' },
-  { name: 'Settings', link: '#' },
+  { name: 'Your Profile', link: '/userprofile' },
   { name: 'Sign out', link: '/logout' },
 ];
 
@@ -36,6 +29,7 @@ function classNames(...classes) {
 }
 
 export default function Navbar({ children }) {
+  const user = useSelector(selectloggedInUser);
   const [showLogin, setShowLogin] = useState(false);
   const HandleLogin = () => {
     setShowLogin(!showLogin);
@@ -117,11 +111,15 @@ export default function Navbar({ children }) {
                             <Menu.Button className='relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
                               <span className='absolute -inset-1.5' />
                               <span className='sr-only'>Open user menu</span>
-                              <img
-                                className='h-8 w-8 rounded-full'
-                                src={user.imageUrl}
-                                alt=''
-                              />
+                              {user.avatar === null ? (
+                                <UserCircleIcon />
+                              ) : (
+                                <img
+                                  className='h-8 w-8 rounded-full'
+                                  src={user.avatar}
+                                  alt=''
+                                />
+                              )}
                             </Menu.Button>
                           </div>
                           <Transition
@@ -200,15 +198,19 @@ export default function Navbar({ children }) {
                 <div className='border-t border-gray-700 pb-3 pt-4'>
                   <div className='flex items-center px-5'>
                     <div className='flex-shrink-0'>
-                      <img
-                        className='h-10 w-10 rounded-full'
-                        src={user.imageUrl}
-                        alt=''
-                      />
+                      {user.avatar === null ? (
+                        <UserCircleIcon />
+                      ) : (
+                        <img
+                          className='h-8 w-8 rounded-full'
+                          src={user.avatar}
+                          alt=''
+                        />
+                      )}
                     </div>
                     <div className='ml-3'>
                       <div className='text-base font-medium leading-none text-white'>
-                        {user.name}
+                        {user.FName}
                       </div>
                       <div className='text-sm font-medium leading-none text-gray-400'>
                         {user.email}

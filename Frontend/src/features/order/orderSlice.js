@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { createOrder, fetchAllOrders,updateOrder } from './orderAPI';
 
 const initialState = {
-  orders: [],
+  // orders:[],
   status: 'idle',
   currentOrder: null,
   totalOrders: 0
@@ -12,9 +12,11 @@ const initialState = {
 export const createOrderAsync = createAsyncThunk(
   'order/createOrder',
   async (order) => {
+    // console.log(order);
     const response = await createOrder(order);
     // The value we return becomes the `fulfilled` action payload
-    return response.data;
+  // console.log(response.data.data);
+    return response.data.data;
   }
 );
 export const updateOrderAsync = createAsyncThunk(
@@ -50,7 +52,7 @@ export const orderSlice = createSlice({
       })
       .addCase(createOrderAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.orders.push(action.payload);
+        // state.orders.push(action.payload);
         state.currentOrder = action.payload;
       })
       .addCase(fetchAllOrdersAsync.pending, (state) => {
@@ -75,7 +77,7 @@ export const orderSlice = createSlice({
 export const { resetOrder } = orderSlice.actions;
 
 export const selectCurrentOrder = (state) => state.order.currentOrder;
-export const selectOrders = (state) => state.order.orders;
+export const selectOrders = (state) => state.order.order;
 export const selectTotalOrders = (state) => state.order.totalOrders;
 
 export default orderSlice.reducer;

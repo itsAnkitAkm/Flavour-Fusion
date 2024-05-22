@@ -13,6 +13,9 @@ module.exports = {
         'yellow-light':'#D4AC63',
         
       },
+      backgroundImage: {
+        'gradient-custom': 'linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))',
+      },
     },
   },
   plugins: [

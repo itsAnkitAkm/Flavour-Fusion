@@ -18,23 +18,25 @@ function Footer() {
               <ul>
                <Link to='/'>
                <li>
-                  <a className='text-sm hover:underline'>Home</a>
+                  <li className='text-sm mb-1 hover:underline'>Home</li>
                 </li></Link>
                 <Link to='/menu'>
                 
                 <li>
-                  <a className='text-sm hover:underline'>Menu</a>
+                  <li className='text-sm mb-1 hover:underline'>Menu</li>
                 </li></Link>
+                <Link to='/contact-us'>
                 <li>
-                  <a href='#' className='text-sm hover:underline'>
+                  <li  className='text-sm mb-1 hover:underline'>
                     Contact Us
-                  </a>
-                </li>
+                  </li>
+                </li> </Link>
+                <Link to='/about-us'>
                 <li>
-                  <a href='#' className='text-sm hover:underline'>
+                  <li  className='text-sm mb-1 hover:underline'>
                     About Us
-                  </a>
-                </li>
+                  </li>
+                </li></Link>
               </ul>
             </div>
             <div className='w-full sm:w-1/2 lg:w-1/4 mb-6'>
