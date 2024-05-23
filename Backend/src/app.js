@@ -45,5 +45,11 @@ app.use("/api/v1/order", orderRouter)
 
 // http://localhost:8000/api/v1/order
 
+import payRouter from './routes/payment.routes.js'
+
+app.use("/api/v1/payment", payRouter)
+
+// http://localhost:8000/api/v1/payment
+
 
 export default app;
