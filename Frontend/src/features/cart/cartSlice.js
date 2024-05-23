@@ -5,6 +5,7 @@ const initialState = {
   items: [],
   bill: 0,
   status: 'idle',
+  cart_id:'',
 };
 
 // Async actions
@@ -63,6 +64,7 @@ export const cartSlice = createSlice({
         state.status = 'idle';
         state.items = action.payload.Order_Item;
         state.bill = action.payload.Bill;
+        state.cart_id=action.payload._id;
       })
       .addCase(fetchCartItemAsync.rejected, (state) => {
         state.status = 'idle';
@@ -106,5 +108,6 @@ export const cartSlice = createSlice({
 // Selectors
 export const cartItem = (state) => state.cart.items;
 export const Bill = (state) => state.cart.bill;
+export const CartId=(state)=>state.cart.cart_id;
 
 export default cartSlice.reducer;
