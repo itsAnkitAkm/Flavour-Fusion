@@ -7,9 +7,13 @@ import {
   fetchAllCategoriesAsync,
   fetchProductByCategoriesAsync,
   selectAllProductsByCategories,
+  fetchAllProductsAsync,
 } from '../features/Menu-list/MenuSlice';
+
+import { fetchCartItemAsync } from '../features/cart/cartSlice';
 import banner1 from '../assets/banner1.png';
 import banner2 from '../assets/banner2.png';
+import { verifyTokenAsync } from '../features/auth/authSlice';
 
 function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,14 +34,17 @@ function HomePage() {
     );
   };
 
-  // const handleClick = async(category) => {
-  //  await  dispatch(fetchProductByCategoriesAsync([category, false]));
-  //   navigate('/menu', { replace: true });
-  // };
+  const handleClick = async (category) => {
+    navigate('/menu', {
+      state:  {categoryName:category }, 
+    });
+  };
 
   useEffect(() => {
-    dispatch(fetchAllCategoriesAsync());
-  }, [dispatch]);
+    dispatch(verifyTokenAsync());
+
+    dispatch(fetchCartItemAsync());
+  }, []);
 
   return (
     <div className='flex flex-col min-h-screen'>
@@ -125,7 +132,7 @@ function HomePage() {
                 />
                 <div
                   className='p-4 text-center cursor-pointer'
-                  // onClick={() => handleClick(category.Name)}
+                  onClick={() => handleClick(category.Name)}
                 >
                   <h3 className='text-lg font-semibold'>{category.Name}</h3>
                 </div>

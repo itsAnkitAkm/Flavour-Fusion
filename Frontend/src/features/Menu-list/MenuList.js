@@ -10,14 +10,12 @@ import {
 
 import {
   selectAllProducts,
-  fetchAllCategoriesAsync,
-  fetchAllProductsAsync,
   selectAllProductsByCategories,
   fetchProductByCategoriesAsync,
-  categoryName,
 } from './MenuSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { addItemAsync, fetchCartItemAsync } from '../cart/cartSlice';
+import { useLocation } from 'react-router-dom';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -25,32 +23,30 @@ function classNames(...classes) {
 
 export default function MenuList() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
- 
-  const [isVeg, setIsVeg] = useState(false);
-  const [categoryName,setcategoryName]=useState();
-  const products = useSelector(selectAllProducts);
 
+  const [isVeg, setIsVeg] = useState(false);
+  const location=useLocation();
+  
+  const [categoryName, setcategoryName] = useState(location.state?.categoryName||' ');
+  const products = useSelector(selectAllProducts);
   const subCategories = useSelector(selectAllProductsByCategories);
   const dispatch = useDispatch();
-  const toogleveg=()=>{
-   
-      setIsVeg((prev)=>!prev);
-  }
-  const HandleFilter = (name) => {
-    
-      setcategoryName(name);
-    
+  const toogleveg = () => {
+    setIsVeg((prev) => !prev);
   };
-  useEffect(()=>{
+  const HandleFilter = (name) => {
+    setcategoryName(name);
+  };
+  
+  useEffect(() => {
     // console.log(categoryName,isVeg);
-dispatch(fetchProductByCategoriesAsync([categoryName,isVeg]));
-  },[categoryName,isVeg])
+    dispatch(fetchProductByCategoriesAsync([categoryName, isVeg]));
+  }, [categoryName, isVeg]);
 
   useEffect(() => {
-    dispatch(fetchAllProductsAsync());
-    dispatch(fetchAllCategoriesAsync());
     dispatch(fetchCartItemAsync());
-  }, [dispatch]);
+    
+  }, []);
 
   return (
     <div className='bg-white'>
@@ -224,7 +220,12 @@ dispatch(fetchProductByCategoriesAsync([categoryName,isVeg]));
               {/* Product grid */}
               <div className='lg:col-span-3'>
                 {/* Menu Grid Start from here */}
-                <MenuGrid products={products} toogleveg={toogleveg} isVeg={isVeg}/>
+                <MenuGrid
+                  products={products}
+                  toogleveg={toogleveg}
+                  isVeg={isVeg}
+                  categoryName={categoryName}
+                />
               </div>
             </div>
           </section>
@@ -235,30 +236,37 @@ dispatch(fetchProductByCategoriesAsync([categoryName,isVeg]));
 }
 
 // menu grid
-function MenuGrid({ products ,toogleveg,isVeg}) {
- 
+function MenuGrid({ products, toogleveg, isVeg, categoryName }) {
   const dispatch = useDispatch();
 
   // console.log(products);
-  let Name = '';
-  Name = useSelector(categoryName);
+
+  let Name = categoryName == null ? 'Our Menu' : categoryName;
   return (
     <div className='bg-white'>
       <div className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8'>
         <div className=' flex justify-between'>
-        <h1 className='text-2xl font-bold'>{Name}</h1>
-        <div className="flex items-center space-x-4 p-4 bg-white rounded-md">
-      <span className={`text-gray-700 ${isVeg ? 'font-semibold' : ''}`}>Pure-Veg</span>
-      <div
-        onClick={toogleveg}
-        className={`relative w-16 h-8 ${isVeg ? 'bg-green-600' : 'bg-red-600'} rounded-full cursor-pointer transition-colors duration-300`}
-      >
-        <div
-          className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${isVeg ? 'translate-x-0' : 'translate-x-9'}`}
-        />
-      </div>
-      <span className={`text-gray-700 ${!isVeg ? 'font-semibold' : ''}`}></span>
-    </div>
+          <h1 className='text-2xl font-bold'>{Name}</h1>
+          <div className='flex items-center space-x-4 p-4 bg-white rounded-md'>
+            <span className={`text-gray-700 ${isVeg ? 'font-semibold' : ''}`}>
+              Pure-Veg
+            </span>
+            <div
+              onClick={toogleveg}
+              className={`relative w-16 h-8 ${
+                isVeg ? 'bg-green-600' : 'bg-red-600'
+              } rounded-full cursor-pointer transition-colors duration-300`}
+            >
+              <div
+                className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                  isVeg ? 'translate-x-0' : 'translate-x-9'
+                }`}
+              />
+            </div>
+            <span
+              className={`text-gray-700 ${!isVeg ? 'font-semibold' : ''}`}
+            ></span>
+          </div>
         </div>
         <div className='mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2  '>
           {products?.map((product) => (

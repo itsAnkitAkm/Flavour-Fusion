@@ -111,12 +111,12 @@ export default function Navbar({ children }) {
                             <Menu.Button className='relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
                               <span className='absolute -inset-1.5' />
                               <span className='sr-only'>Open user menu</span>
-                              {user.avatar === null ? (
+                              {user?.avatar === null ? (
                                 <UserCircleIcon />
                               ) : (
                                 <img
                                   className='h-8 w-8 rounded-full'
-                                  src={user.avatar}
+                                  src={user?.avatar}
                                   alt=''
                                 />
                               )}
@@ -198,24 +198,24 @@ export default function Navbar({ children }) {
                 <div className='border-t border-gray-700 pb-3 pt-4'>
                   <div className='flex items-center px-5'>
                     <div className='flex-shrink-0'>
-                      {user.avatar === null ? (
+                     {user?.avatar === null ? (
                         <UserCircleIcon />
                       ) : (
                         <img
                           className='h-8 w-8 rounded-full'
-                          src={user.avatar}
+                          src={user?.avatar}
                           alt=''
                         />
-                      )}
+                      )} *
                     </div>
                     <div className='ml-3'>
                       <div className='text-base font-medium leading-none text-white'>
-                        {user.FName}
+                        {user?.FName}
                       </div>
                       <div className='text-sm font-medium leading-none text-gray-400'>
-                        {user.email}
-                      </div>
-                    </div>
+                        {user?.email}
+                      </div> 
+                     </div>
                     <Link to='/cart' className='ml-auto'>
                       <button
                         type='button'
