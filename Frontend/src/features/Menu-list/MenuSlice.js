@@ -5,7 +5,7 @@ const initialState = {
   products: [],
   categories: [],
   status: 'idle',
-  category:'OUR MENU',
+  
 };
 
 export const fetchAllProductsAsync = createAsyncThunk(
@@ -88,7 +88,7 @@ export const productSlice = createSlice({
 // export const { increment, decrement, incrementByAmount } = productSlice.actions;
 export const selectAllProducts = (state) => state.product.products;
 export const selectAllProductsByCategories = (state) => state.product.categories;
-export const categoryName=(state)=>state.product.products.CategoryName;
+
 
 // Export the reducer
 export default productSlice.reducer;

@@ -55,6 +55,25 @@ export const checkUser = async (token) => {
   // console.log(response.data.data);
   return response; // Assuming the response contains user data if the token is valid
 };
+export function updateUser(update) {
+  const token = getToken();
+ 
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.patch('http://localhost:8000/api/v1/users/update-account', update, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json' 
+        },
+      });
+      const data = response.data;
+      
+      resolve( data );
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
 export const signOutUser = async () => {
   const token = getToken();
