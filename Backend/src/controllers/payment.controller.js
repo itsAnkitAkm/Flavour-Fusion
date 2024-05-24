@@ -2,6 +2,7 @@ import Razorpay from "razorpay";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import OrdMdl from "../models/order.model.js"
+import { ApiError } from "../utils/ApiError.js";
 
 const instance = new Razorpay({
     key_id: process.env.RP_ID,
@@ -11,6 +12,12 @@ const instance = new Razorpay({
 const createPayOrder= asyncHandler(async(req, res)=>{
     const {orderId}=req.body;
     const ord= await OrdMdl.findById(orderId);
+    if(!ord){
+        throw new ApiError(404,
+            "Order not found",
+        );
+
+    }
     const amount=ord.Total_Bill*100;
     
 
