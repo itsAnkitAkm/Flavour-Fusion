@@ -1,7 +1,7 @@
 
 import { Router } from 'express'; 
 import Razorpay from 'razorpay';
-import { createPayOrder } from '../controllers/payment.controller.js';
+import { createPayOrder, getKey, verifyPayment } from '../controllers/payment.controller.js';
 
 const router = Router();
 const instance = new Razorpay({
@@ -11,5 +11,10 @@ const instance = new Razorpay({
 
 // Create an order route
 router.route('/create-order').post(createPayOrder);
+
+router.route('/verifyPayment').post(verifyPayment);
+
+router.route('/get-key').get(getKey);
+
 
 export default router;
