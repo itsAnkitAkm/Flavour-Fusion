@@ -33,4 +33,19 @@ const createPayOrder= asyncHandler(async(req, res)=>{
       .json(new ApiResponse(200, order, "Order Generated"));
 });
 
-export {createPayOrder}
+const verifyPayment= asyncHandler(async(req, res)=>{
+
+    return res
+      .status(201)
+      .json(new ApiResponse(200, true, "Payment Successful "));
+});
+
+const getKey= ((req, res)=>{
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, Ld0iB2yQKxztV1E07sZUP9ZZ, "key send"));
+});
+
+
+export {createPayOrder, verifyPayment, getKey}
