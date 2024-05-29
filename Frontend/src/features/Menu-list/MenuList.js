@@ -16,6 +16,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { addItemAsync, fetchCartItemAsync } from '../cart/cartSlice';
 import { useLocation } from 'react-router-dom';
+import { verifyTokenAsync } from '../auth/authSlice';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -44,6 +45,7 @@ export default function MenuList() {
   }, [categoryName, isVeg]);
 
   useEffect(() => {
+    dispatch(verifyTokenAsync());
     dispatch(fetchCartItemAsync());
     
   }, []);

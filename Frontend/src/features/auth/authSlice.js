@@ -97,6 +97,7 @@ export const authSlice = createSlice({
       })
       .addCase(verifyTokenAsync.rejected, (state, action) => {
         state.status = 'idle';
+        state.loggedInUser=null;
         state.error = action.payload;
       })
       .addCase(updateUserAsync.pending, (state) => {
