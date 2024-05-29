@@ -39,21 +39,18 @@ function CheckoutPage() {
       console.log(data);
 
       const options = {
-        key: 'Ld0iB2yQKxztV1E07sZUP9ZZ', // Enter the Key ID generated from the Dashboard
+        key: 'rzp_test_1Jt8ENXrK90iMe', // Enter the Key ID generated from the Dashboard
+        // key: 'dbscpFrBGa17cLi7AkvYM9hb', // Enter the Key ID generated from the Dashboard
         amount: data.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
         currency: 'INR',
         name: 'Acme Corp',
         description: 'Test Transaction',
         image: 'https://example.com/your_logo',
         order_id: data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-        handler: function (response) {
-          alert(response.razorpay_payment_id);
-          alert(response.razorpay_order_id);
-          alert(response.razorpay_signature);
-        },
+        callback_url: 'http://localhost:8000/api/v1/payment/verifyPayment',
         prefill: {
-          name: 'Gaurav Kumar',
-          email: 'gaurav.kumar@example.com',
+          name: 'Ankit mishra',
+          email: 'ankitkumarmishra@example.com',
           contact: '9000090000',
         },
         notes: {
@@ -65,18 +62,33 @@ function CheckoutPage() {
       };
       console.log('Razorpay Options:', options);
       const rzp1 = new window.Razorpay(options);
-      
+
       rzp1.on('payment.failed', function (response) {
         console.error('Payment Failed:', response.error);
-        alert('Payment Failed: ' + response.error.code + '\n' +
-              'Description: ' + response.error.description + '\n' +
-              'Source: ' + response.error.source + '\n' +
-              'Step: ' + response.error.step + '\n' +
-              'Reason: ' + response.error.reason + '\n' +
-              'Order ID: ' + response.error.metadata.order_id + '\n' +
-              'Payment ID: ' + response.error.metadata.payment_id);
+        alert(
+          'Payment Failed: ' +
+            response.error.code +
+            '\n' +
+            'Description: ' +
+            response.error.description +
+            '\n' +
+            'Source: ' +
+            response.error.source +
+            '\n' +
+            'Step: ' +
+            response.error.step +
+            '\n' +
+            'Reason: ' +
+            response.error.reason +
+            '\n' +
+            'Order ID: ' +
+            response.error.metadata.order_id +
+            '\n' +
+            'Payment ID: ' +
+            response.error.metadata.payment_id
+        );
       });
-      
+
       rzp1.open();
     } else {
       console.error('Checkout failed', result.error);
