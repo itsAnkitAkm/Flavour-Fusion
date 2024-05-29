@@ -3,43 +3,32 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   fetchCartItemAsync,
   cartItem,
-  updateItemAsync,
   resetCartAsync,
   CartId,
+  updateItemAsync
 } from './cartSlice';
 import { Bill } from './cartSlice';
 import { deleteItemAsync } from './cartSlice';
-import {
-  Button,
-  Dialog,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Typography,
-  Input,
-  Checkbox,
-} from '@material-tailwind/react';
+import { Typography, Input, Checkbox } from '@material-tailwind/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { createOrderAsync, selectCurrentOrder } from '../order/orderSlice';
+import { createOrderAsync } from '../order/orderSlice';
 
 function Cart() {
   const dispatch = useDispatch();
   const cartItems = useSelector(cartItem);
+  
 
   const removeAllItems = () => {
     dispatch(resetCartAsync());
-  };
-
-  const handleQuantity = (e, item) => {
-    dispatch(updateItemAsync({ ...item, quantity: +e.target.value }));
   };
 
   const totalItems = cartItems.reduce(
     (total, item) => item.quantity + total,
     0
   );
-
+  const handleQuantity = (e, item) => {
+    dispatch(updateItemAsync({ ...item, quantity: +e.target.value }));
+  };
   useEffect(() => {
     dispatch(fetchCartItemAsync());
   }, [dispatch]);
@@ -81,16 +70,19 @@ function Cart() {
                   >
                     Qty
                   </label>
-                  <select
-                    onChange={(e) => handleQuantity(e, item)}
-                    value={item.quantity}
-                  >
-                    {[1, 2, 3, 4, 5].map((qty) => (
-                      <option key={qty} value={qty}>
-                        {qty}
-                      </option>
-                    ))}
-                  </select>
+                  <div className='flex items-center space-x-2'>
+                    <select
+                      onChange={(e) => handleQuantity(e, item)}
+                      value={item.quantity}
+                    >
+                      {[1, 2, 3, 4, 5].map((qty) => (
+                        <option key={qty} value={qty}>
+                          {qty}
+                        </option>
+                      ))}
+                    </select>
+                    
+                  </div>
                   <span className='font-bold ml-4'>₹{item.totalAmmount}</span>
                 </div>
               </div>
@@ -148,7 +140,10 @@ function ShoppingCartSummary({ totalItems }) {
 
   const handleDineOptionChange = (e) => {
     const { value } = e.target;
-    setFormData((prevData) => ({ ...prevData, takeAway: value === 'TakeAway' }));
+    setFormData((prevData) => ({
+      ...prevData,
+      takeAway: value === 'TakeAway',
+    }));
   };
 
   const handleOrder = async () => {
@@ -171,7 +166,7 @@ function ShoppingCartSummary({ totalItems }) {
         alert('Failed to place order. Please try again.');
       }
     } else {
-      alert("Enter the table number...");
+      alert('Enter the table number...');
     }
   };
 
@@ -274,8 +269,5 @@ function ShoppingCartSummary({ totalItems }) {
     </div>
   );
 }
-
-
-
 
 export default Cart;

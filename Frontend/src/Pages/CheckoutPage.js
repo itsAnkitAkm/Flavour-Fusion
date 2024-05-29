@@ -9,6 +9,7 @@ import {
   PhoneIcon,
   TruckIcon,
 } from '@heroicons/react/16/solid';
+import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { Bill, CartId, cartItem } from '../features/cart/cartSlice';
 import { selectloggedInUser } from '../features/auth/authSlice';
@@ -41,13 +42,31 @@ function CheckoutPage() {
       const options = {
         key: 'rzp_test_1Jt8ENXrK90iMe', // Enter the Key ID generated from the Dashboard
         // key: 'dbscpFrBGa17cLi7AkvYM9hb', // Enter the Key ID generated from the Dashboard
-        amount: data.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        amount: data?.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
         currency: 'INR',
         name: 'Acme Corp',
         description: 'Test Transaction',
         image: 'https://example.com/your_logo',
-        order_id: data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-        callback_url: 'http://localhost:8000/api/v1/payment/verifyPayment',
+        order_id: data?.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        handler: function (response){
+          // Show SweetAlert on successful payment
+          Swal.fire({
+              title: 'Payment Successful!',
+              text: 'Your payment was successful. Thank you for your purchase!',
+              icon: 'success',
+              confirmButtonText: 'Go to Homepage'
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  // Navigate to the homepage
+                  window.location.href = '/';
+              }
+          });
+  
+          // Optionally, you can still log the payment details if needed
+          console.log(response.razorpay_payment_id);
+          console.log(response.razorpay_order_id);
+          console.log(response.razorpay_signature);
+      },
         prefill: {
           name: 'Ankit mishra',
           email: 'ankitkumarmishra@example.com',
