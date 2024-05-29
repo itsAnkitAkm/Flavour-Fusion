@@ -44,7 +44,7 @@ const getKey= ((req, res)=>{
 
     return res
       .status(200)
-      .json(new ApiResponse(200, Ld0iB2yQKxztV1E07sZUP9ZZ, "key send"));
+      .json(new ApiResponse(200, process.env.RP_KEY, "key send"));
 });
 
 
