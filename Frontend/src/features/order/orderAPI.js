@@ -9,7 +9,7 @@ export function createOrder(order) {
   return new Promise(async (resolve) => {
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/v1/order/create-order',
+        'https://flavour-fusion-backend.onrender.com/api/v1/order/create-order',
         order,
         {
           headers: {
@@ -32,7 +32,7 @@ export function checkout(orderid) {
      
       const token = getToken();
       const response = await axios.post(
-        'http://localhost:8000/api/v1/payment/create-order',
+        'https://flavour-fusion-backend.onrender.com/api/v1/payment/create-order',
         orderid,
         {
           headers: {
