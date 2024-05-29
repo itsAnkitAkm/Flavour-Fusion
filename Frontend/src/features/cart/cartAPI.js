@@ -16,16 +16,14 @@ export function fetchCartItem() {
 }
 export function addItem(item) {
   const token = getToken();
-
+console.log(item);
+console.log (token);
   return axios.post('http://localhost:8000/api/v1/cart/add-to-cart', item, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     }
   });
-}
-export function updateItem(id, item) {
-  return axios.patch(`http://localhost:8080/cart/${id}`, item);
 }
 
 export function deleteItem(item) {
