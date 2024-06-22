@@ -7,7 +7,7 @@ import {
   Squares2X2Icon,
   ShoppingBagIcon,
 } from '@heroicons/react/20/solid';
-
+import Swal from 'sweetalert2';
 import {
   selectAllProducts,
   selectAllProductsByCategories,
@@ -16,7 +16,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { addItemAsync, fetchCartItemAsync } from '../cart/cartSlice';
 import { useLocation } from 'react-router-dom';
-import { verifyTokenAsync } from '../auth/authSlice';
+import { verifyTokenAsync,selectloggedInUser } from '../auth/authSlice';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -240,10 +240,22 @@ export default function MenuList() {
 // menu grid
 function MenuGrid({ products, toogleveg, isVeg, categoryName }) {
   const dispatch = useDispatch();
-
+  const user=useSelector(selectloggedInUser);
   // console.log(products);
 
   let Name = categoryName == null ? 'Our Menu' : categoryName;
+  const AddToCart=(product)=>{
+    if(user==null){
+      Swal.fire({
+       
+        text: 'Please sign in before add item to cart!',
+       
+    })
+    }
+    else{
+      dispatch(addItemAsync(product))
+    }
+  }
   return (
     <div className='bg-white'>
       <div className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8'>
@@ -294,7 +306,7 @@ function MenuGrid({ products, toogleveg, isVeg, categoryName }) {
                 <div className='flex justify-center items-center'>
                   {' '}
                   <button
-                    onClick={() => dispatch(addItemAsync(product))}
+                    onClick={() => AddToCart(product)}
                     className='flex p-6 items-center mt-4 w-85 h-10 border-2 border-red-600 cursor-pointer rounded-md text-xl font-bold bg-btn-orange bg-opacity-25 hover:bg-btn-red hover:text-white transition duration-200'
                   >
                     Add to Bag{' '}
