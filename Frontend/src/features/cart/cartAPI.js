@@ -5,7 +5,7 @@ function getToken() {
 
 export function fetchCartItem() {
   const token = getToken();
-  return axios.get('http://localhost:8000/api/v1/cart/get-cart',{
+  return axios.get('https://flavour-fusion-backend.onrender.com/api/v1/cart/get-cart',{
     headers:{
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -18,7 +18,7 @@ export function addItem(item) {
   const token = getToken();
 console.log(item);
 console.log (token);
-  return axios.post('http://localhost:8000/api/v1/cart/add-to-cart', item, {
+  return axios.post('https://flavour-fusion-backend.onrender.com/api/v1/cart/add-to-cart', item, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -29,7 +29,7 @@ console.log (token);
 export function deleteItem(item) {
   const token = getToken();
 
-  return axios.delete(`http://localhost:8000/api/v1/cart/remove-item`, {
+  return axios.delete(`https://flavour-fusion-backend.onrender.com/api/v1/cart/remove-item`, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ export function deleteItem(item) {
 export function resetCart() {
   const token = getToken();
 
-  return axios.delete('http://localhost:8000/api/v1/cart/delete-cart', {
+  return axios.delete('https://flavour-fusion-backend.onrender.com/api/v1/cart/delete-cart', {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
