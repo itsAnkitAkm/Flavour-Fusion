@@ -31,7 +31,7 @@ export function loginUser(loginInfo) {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/v1/users/login',
+        'https://flavour-fusion-backend.onrender.com/api/v1/users/login',
         loginInfo
       );
       const loginData = response.data.data.user;
@@ -45,7 +45,7 @@ export function loginUser(loginInfo) {
 }
 export const checkUser = async (token) => {
   const response = await axios.get(
-    'http://localhost:8000/api/v1/users/current-user',
+    'https://flavour-fusion-backend.onrender.com/api/v1/users/current-user',
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ export function updateUser(update) {
  
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await axios.patch('http://localhost:8000/api/v1/users/update-account', update, {
+      const response = await axios.patch('https://flavour-fusion-backend.onrender.com/api/v1/users/update-account', update, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json' 
@@ -81,7 +81,7 @@ export const signOutUser = async () => {
 
   try {
     await axios.post(
-      'http://localhost:8000/api/v1/users/logout',
+      'https://flavour-fusion-backend.onrender.com/api/v1/users/logout',
       {},
       {
         headers: {
