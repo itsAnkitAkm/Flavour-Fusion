@@ -36,4 +36,4 @@ Provide instructions on how others can contribute to your project.
 Include information about the license.
 
 ## Contact
-Your Name - Your Email - Your Github Profile Link
+Ankit Mishra - itsamkankit@gmail.com
